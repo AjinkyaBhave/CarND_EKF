@@ -18,13 +18,11 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in, MatrixXd
   R_laser_ = R_laser_in;
   R_radar_ = R_radar_in;
   I_ = MatrixXd::Identity(x_.size(), x_.size());
-
-  
 }
 
 void KalmanFilter::Predict() {
   x_ = F_ * x_;
-  P  = F_ * P_ * F_.transpose() + Q_;
+  P_ = F_ * P_ * F_.transpose() + Q_;
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
@@ -38,9 +36,20 @@ void KalmanFilter::Update(const VectorXd &z) {
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
-  /**
-  TODO:
-    * update the state by using Extended Kalman Filter equations
-  */
+  // Calculate h(x) from predicted state to predicted radar measurements
+  VectorXd h = VectorXd(z.size());
+  h(0) = sqrt(x_(0)*x_(0) + x_(1)*x_(1));
+  h(1) = atan2(x_(1), x_(0));
+  h(2) = (x_(0)*x_(2)+x_(1)*x_(3))/h(0);
+    
+  VectorXd y  = z - h;
+  // Normalise phi to be between -pi and pi
+  
+  MatrixXd S  = H_radar_ * P_ * H_radar_.transpose() + R_radar_;
+  MatrixXd K  = P_ * H_radar_.transpose() * S.inverse();
+  
+  //new state
+  x_ = x_ + (K * y);
+  P_ = (I_ - K * H_radar_) * P_;
   
 }

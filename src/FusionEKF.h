@@ -39,11 +39,11 @@ private:
   long long previous_timestamp_;
   
   // Number of states
-  n_states = 4;
+  int n_states;
   // Number of laser measurements
-  n_laser_meas = 2;
+  int n_laser_meas;
   // Number of radar measurements
-  n_radar_meas = 3;
+  int n_radar_meas;
   
   // variance of acceleration in x and y
   float var_ax; 

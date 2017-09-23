@@ -16,7 +16,12 @@ FusionEKF::FusionEKF() {
   is_initialized_ = false;
   previous_timestamp_ = 0;
   
-  //set the process noise variances
+  // Define state and measurement dimensions
+  n_states = 4;
+  n_laser_meas = 2;
+  n_radar_meas = 3;
+  
+  // Set the process noise variances
   var_ax = 5;
   var_ay = 5;
   var_vx = 1000;
@@ -47,7 +52,7 @@ FusionEKF::FusionEKF() {
 				 0, 0, 0, 0,
 				 0, 0, 0, 0;		
 				 
-  //create a 4D state vector. We don't know yet the values of the state variables.
+  // Allocate memory for 4D state vector. We don't know yet the values of the state variables.
   VectorXd x = VectorXd(n_states);
 
   // Initial state covariance matrix
@@ -98,9 +103,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     cout << "First measurement.\n ";
     
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-      /**
-      Convert radar from polar to cartesian coordinates and initialize state.
-      */
+      // Convert radar from polar to cartesian coordinates and initialize state.
+      ekf_.x_(0) = measurement_pack.raw_measurements_[0]* cos(measurement_pack.raw_measurements_[1]);
+		ekf_.x_(1) = measurement_pack.raw_measurements_[0]* sin(measurement_pack.raw_measurements_[1]);
+		// Cannot calculate velocity from range rate directly, so assuming zero.
+		ekf_.x_(2) = 0;
+		ekf_.x_(3) = 0;
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       //set the state with the initial location and zero velocity
@@ -148,15 +156,10 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   /*****************************************************************************
    *  Update
    ****************************************************************************/
-
-  /**
-   TODO:
-     * Use the sensor type to perform the update step.
-     * Update the state and covariance matrices.
-   */
-
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // Radar updates
+	 ekf_.H_radar_ = tools.CalculateJacobian(ekf_.x_);
+	 ekf_.UpdateEKF(measurement_pack.raw_measurements_);
   } 
   else {
     // Laser updates
