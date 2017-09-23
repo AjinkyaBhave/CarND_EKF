@@ -37,13 +37,30 @@ private:
 
   // previous timestamp
   long long previous_timestamp_;
-
+  
+  // Number of states
+  n_states = 4;
+  // Number of laser measurements
+  n_laser_meas = 2;
+  // Number of radar measurements
+  n_radar_meas = 3;
+  
+  // variance of acceleration in x and y
+  float var_ax; 
+  float var_ay; 
+  // variance of velocity in x and y
+  float var_vx; 
+  float var_vy;
+  // variance of position in x and y
+  float var_px; 
+  float var_py;
+  
   // tool object used to compute Jacobian and RMSE
   Tools tools;
   Eigen::MatrixXd R_laser_;
   Eigen::MatrixXd R_radar_;
   Eigen::MatrixXd H_laser_;
-  Eigen::MatrixXd Hj_;
+  Eigen::MatrixXd H_radar_;
 };
 
 #endif /* FusionEKF_H_ */

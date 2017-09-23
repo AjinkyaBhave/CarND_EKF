@@ -17,11 +17,20 @@ public:
   // process covariance matrix
   Eigen::MatrixXd Q_;
 
-  // measurement matrix
-  Eigen::MatrixXd H_;
+  // measurement matrix for laser
+  Eigen::MatrixXd H_laser_;
 
-  // measurement covariance matrix
-  Eigen::MatrixXd R_;
+  // measurement matrix for radar
+  Eigen::MatrixXd H_radar_;
+
+  // measurement covariance matrix for laser
+  Eigen::MatrixXd R_laser_;
+	
+  // measurement covariance matrix for radar
+  Eigen::MatrixXd R_radar_;
+  
+  // Identity matrix for efficient calculations in Update()
+  Eigen::MatrixXd I_; 
 
   /**
    * Constructor
