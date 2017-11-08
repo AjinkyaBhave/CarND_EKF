@@ -44,6 +44,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     
   VectorXd y  = z - h;
   // Normalise phi to be between -pi and pi
+  // Angle normalization
+  while (y(1)> M_PI) y(1)-=2.*M_PI;
+  while (y(1)<-M_PI) y(1)+=2.*M_PI;
   
   MatrixXd S  = H_radar_ * P_ * H_radar_.transpose() + R_radar_;
   MatrixXd K  = P_ * H_radar_.transpose() * S.inverse();
