@@ -22,10 +22,10 @@ FusionEKF::FusionEKF() {
   n_radar_meas = 3;
   
   // Set the process noise variances
-  var_ax = 5;
-  var_ay = 5;
-  var_vx = 1000;
-  var_vy = 1000;
+  var_ax = 9;
+  var_ay = 9;
+  var_vx = 100;
+  var_vy = 100;
   var_px = 1;
   var_py = 1;
 
@@ -47,7 +47,7 @@ FusionEKF::FusionEKF() {
   H_laser_ << 1, 0, 0, 0,
 				 0, 1, 0, 0;	
 	
-  // Initial laser measurement matrix
+  // Initial radar measurement matrix
   H_radar_ << 0, 0, 0, 0,
 				 0, 0, 0, 0,
 				 0, 0, 0, 0;		
@@ -167,6 +167,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   }
 
   // print the output
-  cout << "x_ = " << ekf_.x_ << endl;
-  cout << "P_ = " << ekf_.P_ << endl;
+  //cout << "x_ = " << ekf_.x_ << endl;
+  //cout << "P_ = " << ekf_.H_radar_ << endl;
 }
