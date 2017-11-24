@@ -3,6 +3,8 @@
 #include <vector>
 #include "Eigen/Dense"
 
+#define ZERO_COMPARE 0.0001
+
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using namespace std;

@@ -39,19 +39,20 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   // Calculate h(x) from predicted state to predicted radar measurements
   VectorXd h = VectorXd(z.size());
   h(0) = sqrt(x_(0)*x_(0) + x_(1)*x_(1));
-  h(1) = atan2(x_(1), x_(0));
+  if(fabs(x_(0))> 0.001 && fabs(x_(1)) > 0.001)
+	 h(1) = atan2(x_(1), x_(0));
+  else
+	 h(1) = 0;
   h(2) = (x_(0)*x_(2)+x_(1)*x_(3))/h(0);
     
   VectorXd y  = z - h;
-  // Normalise phi to be between -pi and pi
-  // Angle normalization
-  while (y(1)> M_PI) y(1)-=2.*M_PI;
-  while (y(1)<-M_PI) y(1)+=2.*M_PI;
+  // Normalise phi difference to be between -pi and pi
+  y(1) = atan2(sin(y(1)),cos(y(1)));
   
   MatrixXd S  = H_radar_ * P_ * H_radar_.transpose() + R_radar_;
   MatrixXd K  = P_ * H_radar_.transpose() * S.inverse();
   
-  //new state
+  // New state
   x_ = x_ + (K * y);
   P_ = (I_ - K * H_radar_) * P_;
   
